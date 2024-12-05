@@ -15,19 +15,18 @@ This code is based on another code I adapted in Julia with much help from others
 
 The other `savgol-rs` implementation offers this speed:
 
-```no_run
+```rust
 use savgol_rs::*;
-fn main() {
-    let input = SavGolInput {
-        data: &vec![10.0; 500_000],
-        window_length: 3,
-        poly_order: 1,
-        derivative: 0,
-    };
-    let result = savgol_filter(&input);
-    let data = result.unwrap();
-    println!("{:?}", &data[0..10]);
-}
+
+let input = SavGolInput {
+    data: &vec![10.0; 500_000],
+    window_length: 3,
+    poly_order: 1,
+    derivative: 0,
+};
+let result = savgol_filter(&input);
+let data = result.unwrap();
+println!("{:?}", &data[0..10]);
 ```
 
 takes about `52s`, whereas this crate
@@ -35,14 +34,12 @@ takes about `52s`, whereas this crate
 ```rust
 use staged_sg_filter::sav_gol;
 
-fn main() {
-    let n = 100_000_000;
-    let v = vec![10.0; n];
-    let mut buf = vec![0.0; n];
-    sav_gol::<1, 1>(&mut buf, &v);
+let n = 100_000_000;
+let v = vec![10.0; n];
+let mut buf = vec![0.0; n];
+sav_gol::<1, 1>(&mut buf, &v);
 
-    println!("{:?}", &buf[0..10]);
-}
+println!("{:?}", &buf[0..10]);
 ```
 
 runs in about `200ms` in 20x the data size. We're roughly churning through about `100_000_000/0.2 ≈ 5e8` elements per second or `5e8 * 10^-9 ≈ 0.5` elements per nanosecond.

@@ -2,6 +2,7 @@
 //#![feature(portable_simd)]
 #![doc = include_str!("../../README.md")]
 #![cfg_attr(not(feature = "std"), no_std)]
+#![allow(clippy::excessive_precision)]
 
 use coeffs::get_coeffs;
 use coeffs_f32::get_coeffs_f32;
@@ -152,12 +153,12 @@ fn test_sav_golf32() {
 // cargo asm --lib
 #[inline(never)]
 pub fn asm_dump_f64(buf: &mut [f64], data: &mut [f64]) {
-    sav_gol::<2, 2>(buf, &data);
+    sav_gol::<2, 2>(buf, data);
 }
 
 #[inline(never)]
 pub fn asm_dump_f32(buf: &mut [f32], data: &mut [f32]) {
-    sav_gol_f32::<2, 2>(buf, &data);
+    sav_gol_f32::<2, 2>(buf, data);
 }
 
 #[cfg(feature = "rayon")]
