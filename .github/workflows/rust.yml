@@ -29,5 +29,4 @@ jobs:
       run: |
         cd test_no_std
         rustup target add thumbv7em-none-eabihf
-        rustup toolchain install nightly
-        cargo +nightly build --verbose
+        cargo build --verbose

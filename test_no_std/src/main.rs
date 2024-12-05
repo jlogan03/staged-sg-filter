@@ -6,7 +6,6 @@
 use core::panic::PanicInfo;
 
 use staged_sg_filter;
-use core::assert_eq;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
