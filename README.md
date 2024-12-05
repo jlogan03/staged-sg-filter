@@ -15,7 +15,7 @@ This code is based on another code I adapted in Julia with much help from others
 
 The other `savgol-rs` implementation offers this speed:
 
-```rust
+```no_run
 use savgol_rs::*;
 fn main() {
     let input = SavGolInput {

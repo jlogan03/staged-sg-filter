@@ -1,23 +1,6 @@
-[package]
-name = "staged-sg-filter"
-version = "0.2.3"
-edition = "2021"
-license = "MIT"
-description = "A staged programming implementation for Savitzky-Golay filters. Loops go brrr."
-repository = "https://github.com/miguelraz/staged-sg-filter"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[features]
-default = ["std"]
-std = []
-
-[dependencies]
-rayon = { version = "1.10.0", optional = true }
-
-[dev-dependencies]
-divan = "0.1.14"
-
-[[bench]]
-name = "divan"
-harness = false
+[workspace]
+members = [
+    "staged-sg-filter",
+]
+exclude = [ "test_no_std" ]
+resolver = "2"

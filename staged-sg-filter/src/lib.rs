@@ -1,56 +1,68 @@
 //#![feature(array_chunks)]
 //#![feature(portable_simd)]
+#![doc = include_str!("../../README.md")]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 use coeffs::get_coeffs;
 use coeffs_f32::get_coeffs_f32;
+
+#[cfg(test)]
+use core::assert_eq;
 
 pub mod coeffs;
 pub mod coeffs_f32;
 
 /// Small utility function to clean up the `sav_gol` filter
+#[cfg(feature = "std")]
 #[inline]
 pub fn dot_prod_update(buf: &mut f64, data: &[f64], coeffs: &[f64]) {
-    if !cfg!(feature = "std") {
     *buf = data
         .iter()
         .zip(coeffs.iter())
-        .fold(0.0f64, |acc, (a, b)| a.mul_add(*b, acc));
-    } else {
-    *buf = data
-        .iter()
-        .zip(coeffs.iter())
-        .fold(0.0f64, |acc, (a, b)| a * (*b) + acc);
-    }
+        .fold(0.0f64, |acc, (&a, &b)| a.mul_add(b, acc));
 }
 
+/// Small utility function to clean up the `sav_gol` filter
+#[cfg(not(feature = "std"))]
+#[inline]
+pub fn dot_prod_update(buf: &mut f64, data: &[f64], coeffs: &[f64]) {
+    *buf = data
+        .iter()
+        .zip(coeffs.iter())
+        .fold(0.0f64, |acc, (&a, &b)| a * b + acc);
+}
+
+#[cfg(feature = "std")]
 #[inline]
 pub fn dot_prod_update_f32(buf: &mut f32, data: &[f32], coeffs: &[f32]) {
-    if !cfg!(feature = "std") {
     *buf = data
         .iter()
         .zip(coeffs.iter())
-        .fold(0.0f32, |acc, (a, b)| a.mul_add(*b, acc));
-    } else {
+        .fold(0.0f32, |acc, (&a, &b)| a.mul_add(b, acc));
+}
+
+#[cfg(not(feature = "std"))]
+#[inline]
+pub fn dot_prod_update_f32(buf: &mut f32, data: &[f32], coeffs: &[f32]) {
     *buf = data
         .iter()
         .zip(coeffs.iter())
-        .fold(0.0f32, |acc, (a, b)| a * (*b) + acc);
-    }
+        .fold(0.0f32, |acc, (&a, &b)| a * b + acc);
 }
 
 #[test]
 fn test_dot_prod_update() {
     let mut buf = 0.0;
-    let data = vec![1.0; 4];
-    let coeffs = vec![0.25; 4];
+    let data = [1.0; 4];
+    let coeffs = [0.25; 4];
     dot_prod_update(&mut buf, &data, &coeffs);
     assert_eq!(buf, 1.0);
 }
 #[test]
 fn test_dot_prod_update_f32() {
     let mut buf = 0.0f32;
-    let data = vec![1.0f32; 4];
-    let coeffs = vec![0.25f32; 4];
+    let data = [1.0f32; 4];
+    let coeffs = [0.25f32; 4];
     dot_prod_update_f32(&mut buf, &data, &coeffs);
     assert_eq!(buf, 1.0f32);
 }
@@ -66,10 +78,10 @@ fn test_dot_prod_update_f32() {
 /// There also exists a parallel version of this filter as `par_sav_gol`, behind a feature flag `par_sav_gol`.
 /// ```
 ///     use staged_sg_filter::sav_gol;
-///     let mut v = vec![0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0];
-///     let mut buf = vec![0.0; 7];
+///     let mut v = [0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0];
+///     let mut buf = [0.0; 7];
 ///     sav_gol::<1, 1>(&mut buf, &v);
-///     let res = vec![0.0, 0.3333333333333333, 0.6666666666666666, 0.3333333333333333, 0.6666666666666666, 0.3333333333333333, 0.0];
+///     let res = [0.0, 0.3333333333333333, 0.6666666666666666, 0.3333333333333333, 0.6666666666666666, 0.3333333333333333, 0.0];
 ///     assert_eq!(res, buf);
 ///```
 pub fn sav_gol<const WINDOW: usize, const M: usize>(buf: &mut [f64], data: &[f64]) {
@@ -104,10 +116,10 @@ pub fn sav_gol_f32<const WINDOW: usize, const M: usize>(buf: &mut [f32], data: &
 
 #[test]
 fn test_sav_gol() {
-    let v = vec![0.0, 10.0, 0.0, 10.0, 0.0, 10.0, 0.0];
-    let mut buf = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0];
+    let v = [0.0, 10.0, 0.0, 10.0, 0.0, 10.0, 0.0];
+    let mut buf = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0];
     sav_gol::<1, 1>(&mut buf, &v);
-    let res = vec![
+    let res = [
         1.0,
         3.333333333333333,
         6.666666666666666,
@@ -121,10 +133,10 @@ fn test_sav_gol() {
 
 #[test]
 fn test_sav_golf32() {
-    let v = vec![0.0f32, 10.0f32, 0.0f32, 10.0f32, 0.0f32, 10.0f32, 0.0f32];
-    let mut buf = vec![1.0f32, 2.0f32, 3.0f32, 4.0f32, 5.0f32, 6.0f32, 7.0f32];
+    let v = [0.0f32, 10.0f32, 0.0f32, 10.0f32, 0.0f32, 10.0f32, 0.0f32];
+    let mut buf = [1.0f32, 2.0f32, 3.0f32, 4.0f32, 5.0f32, 6.0f32, 7.0f32];
     sav_gol_f32::<1, 1>(&mut buf, &v);
-    let res = vec![
+    let res = [
         1.0f32,
         3.3333335f32,
         6.666667f32,
