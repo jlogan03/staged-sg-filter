@@ -74,5 +74,5 @@ Decent efforts have been made to ensure
 - [X] f32/f64 float support
 - [ ] SIMD support
 - [ ] GPU support / ping Manuel Drehwald
-- [ ] `no_std` support see([Effective Rust link](https://www.lurklurk.org/effective-rust/no-std.html))
+- [X] `no_std` support see([Effective Rust link](https://www.lurklurk.org/effective-rust/no-std.html))
 - [ ] support derivatives (stretch goal - sponsor me???)
