@@ -19,7 +19,7 @@ The other `savgol-rs` implementation offers this speed:
 use savgol_rs::*;
 
 let input = SavGolInput {
-    data: &vec![10.0; 500_000],
+    data: &vec![10.0; 50_000],  // decreased to reduce test times
     window_length: 3,
     poly_order: 1,
     derivative: 0,
@@ -29,7 +29,7 @@ let data = result.unwrap();
 println!("{:?}", &data[0..10]);
 ```
 
-takes about `52s`, whereas this crate
+takes about `52s` for 500,000 elements, whereas this crate
 
 ```rust
 use staged_sg_filter::sav_gol;
