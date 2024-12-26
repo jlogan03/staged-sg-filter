@@ -1,6 +1,6 @@
 //#![feature(array_chunks)]
 //#![feature(portable_simd)]
-#![doc = include_str!("../../README.md")]
+#![doc = include_str!("../README.md")]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![allow(clippy::excessive_precision)]
 
